@@ -1,0 +1,26 @@
+apiVersion: camel.apache.org/v1alpha1
+kind: KameletBinding
+metadata:
+  name: imageconsumer
+spec:
+  sink:
+    properties:
+      accessKey: minio
+      autoCreateBucket: true
+      bucketName: images
+      endpoint: 'http://minio-ml-workshop:9000'
+      secretKey: minio123
+    ref:
+      apiVersion: camel.apache.org/v1alpha1
+      kind: Kamelet
+      name: minio-sink
+  source:
+    properties:
+      bootstrapServers: ''
+      password: ''
+      topic: video-stream
+      user: ''
+    ref:
+      apiVersion: camel.apache.org/v1alpha1
+      kind: Kamelet
+      name: kafka-source
