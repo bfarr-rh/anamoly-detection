@@ -4,12 +4,16 @@ const { CompressionTypes } = require('kafkajs');
 const url = require("url");
 const path = require("path");
 const fs = require("fs");
+if (process.env.CAPTURE_INTERVAL) {
+  const CAPTURE_INTERVAL = 1200;
+} else {
+  CAPTURE_INTERVAL = process.env.CAPTURE_INTERVAL;
+}
 
 console.log(process.env.KAFKA_BROKER_URL)
 
 const kafka = new Kafka({
   clientId: 'video-topic',
-  // brokers: ['localhost:9092'],
     brokers: [process.env.KAFKA_BROKER_URL],
   ssl: true,
   logLevel: 2,
@@ -42,7 +46,7 @@ const run = async () => {
   await producer.connect()
 }
 
-const host = 'localhost';
+const host = '0.0.0.0';
 const port = 8080;
 
 
@@ -125,7 +129,7 @@ run().catch(console.error)
 
 
 const server = http.createServer(requestListener);
-server.listen(port, host, () => {
+server.listen(port, () => {
     console.log(`Server is running on http://${host}:${port}`);
 });
 
