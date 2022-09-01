@@ -1,6 +1,9 @@
-const { Kafka } = require('kafkajs')
+const { Kafka } = require('kafkajs');
 const http = require("http");
-const { CompressionTypes } = require('kafkajs')
+const { CompressionTypes } = require('kafkajs');
+const url = require("url");
+const path = require("path");
+const fs = require("fs");
 
 console.log(process.env.KAFKA_BROKER_URL)
 
@@ -16,6 +19,10 @@ const kafka = new Kafka({
    password: process.env.SASL_PASSWORD
  }
 })
+
+process.on('SIGINT', function() {
+  process.exit();
+});
 
 var isConnected = false
 
@@ -36,20 +43,21 @@ const run = async () => {
 }
 
 const host = 'localhost';
-const port = 8000;
+const port = 8080;
 
 
 const requestListener = async function (req, res) {
-
+  var pathname = url.parse(req.url).pathname;
+  if (pathname.startsWith("/send")) {
     res.setHeader('Access-Control-Allow-Origin', '*');
-	res.setHeader('Access-Control-Request-Method', '*');
-	res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, POST');
-	res.setHeader('Access-Control-Allow-Headers', '*');
-	if ( req.method === 'OPTIONS' ) {
-		res.writeHead(200);
-		res.end();
-		return;
-	}
+    res.setHeader('Access-Control-Request-Method', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, POST');
+    res.setHeader('Access-Control-Allow-Headers', '*');
+    if ( req.method === 'OPTIONS' ) {
+      res.writeHead(200);
+      res.end();
+      return;
+    }
 
     if (!isConnected){
       console.log('message NOT posted becuase server is still connecting ' + new Date());
@@ -81,8 +89,35 @@ const requestListener = async function (req, res) {
       res.end();
 
       })
-
-    //not prod ready code
+    } else {
+      var uri = url.parse(req.url).pathname
+        , filename = path.join(process.cwd(), uri);
+  
+      fs.exists(filename, function(exists) {
+        if(!exists) {
+          res.writeHead(404, {"Content-Type": "text/plain"});
+          res.write("404 Not Found\n");
+          res.end();
+                  return;
+        }
+      
+        if (fs.statSync(filename).isDirectory()) filename += '/index.html';
+      
+        fs.readFile(filename, "binary", function(err, file) {
+          if(err) {        
+            res.writeHead(500, {"Content-Type": "text/plain"});
+            res.write(err + "\n");
+            res.end();
+            return;
+          }
+  
+          res.writeHead(200);
+          res.write(file, "binary");
+          res.end();
+        });
+    
+        });
+    }
 
 };
 
