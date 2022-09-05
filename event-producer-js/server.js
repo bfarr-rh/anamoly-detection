@@ -4,9 +4,9 @@ const { CompressionTypes } = require('kafkajs');
 const url = require("url");
 const path = require("path");
 const fs = require("fs");
-if (!process.env.CAPTURE_INTERVAL) {
-  const CAPTURE_INTERVAL = 1200;
-} else {
+
+var CAPTURE_INTERVAL = 1200;
+if (process.env.CAPTURE_INTERVAL) {
   CAPTURE_INTERVAL = process.env.CAPTURE_INTERVAL;
 }
 
