@@ -23,24 +23,9 @@ Data Science team use the platform to build (and re-train) and deploy the model 
 # Env Settings
 ```bash
 
-export MINIO_USER="minio"
-export MINIO_PASSWORD=""
 export SASL_USERNAME=""
 export SASL_PASSWORD=""
 export KAFKA_BROKER=""
-export GROUP_ID="imageclassification"
-export MINIO_SERVER=""
-export PARALLEL_INFERENCE=15
-export PROMETHEUS_SERVER=localhost:9090
-export MODEL_URL="http://model-1-pred-demo-fmv3.apps.dbs-indo-1.apac-1.rht-labs.com/api/v1.0/predictions
 ```
 
-
-# Run producer
-```bash 
-brew install go
-brew isntall opencv
-```
-
-# Warning
-Make sure that the image-prediction bucket is public
+run deploy.sh
