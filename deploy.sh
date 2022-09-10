@@ -17,7 +17,7 @@ oc apply -f ./deploy/Seldon-Deployment.yaml
 
 oc apply -f ./deploy/minio-full.yaml
 
-oc new-app https://github.com/bfarr-rh/predictive-maint.git  --context-dir=frontend  --name=dashboard -e MINIO_URL=http://minio-ml-workshop:9000
+oc new-app https://github.com/bfarr-rh/anamoly-detection.git  --context-dir=frontend  --name=dashboard -e MINIO_URL=http://minio-ml-workshop:9000
 oc create route edge --service=dashboard
 
 oc new-app https://github.com/bfarr-rh/anamoly-detection.git  --context-dir=event-producer-js --name=frontend -e CAPTURE_INTERVAL=$CAPTURE_INTERVAL -e KAFKA_BROKER_URL=$KAFKA_BROKER_URL -e SASL_USERNAME=$SASL_USERNAME -e SASL_PASSWORD=$SASL_PASSWORD
