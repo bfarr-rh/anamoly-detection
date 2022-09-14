@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: postgreslocal
+  name: postgreslocal
+spec:
+  selector:
+    matchLabels:
+      app: postgreslocal
+  template:
+    metadata:
+      labels:
+        app: postgreslocal
+    spec:
+      containers:
+      - env:
+        - name: POSTGRESQL_DATABASE
+          value: dblocal
+        - name: POSTGRESQL_USER
+          value: user
+        - name: POSTGRESQL_PASSWORD
+          value: postgreslocal
+        - name: PGDATA
+          value: /temp/data
+        image: registry.redhat.io/rhel8/postgresql-10:1-192
+        imagePullPolicy: Always
+        name: postgreslocal
+        ports:
+        - containerPort: 5432
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 60m
+            memory: 512Mi
+          requests:
+            cpu: 30m
+            memory: 128Mi
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: postgreslocal
+  name: postgreslocal
+spec:
+  ports:
+  - name: http
+    port: 5432
+    protocol: TCP
+  selector:
+    app: postgreslocal
+#  type: NodePort
+
+
